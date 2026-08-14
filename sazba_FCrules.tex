@@ -1,0 +1,77 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{ifthen}
+\usepackage{pagecolor}
+\usepackage[scaled]{helvet}
+\usepackage{tikz}
+\usepackage{titlesec}
+\usepackage{pgfmath}
+\usepackage{multicol}
+
+
+\usepgflibrary{fpu}
+\usetikzlibrary{shapes.geometric}
+
+
+\paperheight=297mm
+\paperwidth=210mm
+% nestandardni odsazeni (std. po 1 palci zleva a shora]
+\hoffset=-1in
+\voffset=-1in  \addtolength{\voffset}{10mm}
+% nastaveni rozmeru textoveho tela
+\textheight=272mm
+\textwidth=190mm
+% odsazeni spodni hrany paty od spodni hrany textoveho tela
+\footskip=2mm
+% pridani odsazeni zleva na sudych i lichych strankach
+\oddsidemargin=10mm
+\evensidemargin=10mm
+% vynulovani ostatnich rozmeru.
+\marginparwidth=0pt
+\marginparsep=0pt
+\topmargin=0pt
+\headheight=0pt
+\headsep=0pt
+
+
+\setlength{\parindent}{0pt}
+
+
+\renewcommand*{\thepage}{\color{white}--~\arabic{page}~--}
+\renewcommand\familydefault{\sfdefault}
+\pagecolor{black!95}
+\titleformat*{\section}{\sf\bf\LARGE%
+\color{yellow!70!orange}%
+%\color{white}%
+}
+
+
+% #1 - cislo pravidla fight clubu
+% #2 - text pravidla
+% #3 - autor vyroku pravidla
+% \def\FCrule#1#2#3{\##1: {\em #2} (#3)}
+% \def\FCrule#1#2#3{\item[#1] \textcolor{black!10}{#2}}
+\def\FCrule#1#2#3{{\color{yellow!70!orange}#1}: {\color{black!10} #2} \\}
+
+
+% #5 - pravidlo
+\def\FC#1#2#3#4#5#6#7#8#9{%#5%
+  \ifthenelse{\equal{#5}{}}{}{#5}%
+}
+
+\begin{document}
+
+\begin{multicols}{2}
+% \begin{itemize}
+% \setlength{labelwidth}{10mm}
+% \setlength{labelindent}{11mm}
+% \begin{description}
+\input{subtexs/FC.tex}
+% \end{description}
+% \end{itemize}
+\end{multicols}
+
+\end{document}

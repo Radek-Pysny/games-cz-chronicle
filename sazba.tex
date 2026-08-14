@@ -1,0 +1,280 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{ifthen}
+\usepackage{pagecolor}
+\usepackage[scaled]{helvet}
+\usepackage{tikz}
+\usepackage{titlesec}
+\usepackage{pgfmath}
+
+
+\usepgflibrary{fpu}
+\usetikzlibrary{shapes.geometric}
+
+\newcommand\uv[1]{\quotedblbase #1\textquotedblleft}%
+
+
+\paperheight=297mm
+\paperwidth=210mm
+% nestandardni odsazeni (std. po 1 palci zleva a shora]
+\hoffset=-1in
+\voffset=-1in  \addtolength{\voffset}{10mm}
+% nastaveni rozmeru textoveho tela
+\textheight=272mm
+\textwidth=190mm
+% odsazeni spodni hrany paty od spodni hrany textoveho tela
+\footskip=2mm
+% pridani odsazeni zleva na sudych i lichych strankach
+\oddsidemargin=10mm
+\evensidemargin=10mm
+% vynulovani ostatnich rozmeru.
+\marginparwidth=0pt
+\marginparsep=0pt
+\topmargin=0pt
+\headheight=0pt
+\headsep=0pt
+
+
+\setlength{\parindent}{0pt}
+
+
+\renewcommand*{\thepage}{\color{white}--~\arabic{page}~--}
+\renewcommand\familydefault{\sfdefault}
+\pagecolor{black!95}
+\titleformat*{\section}{\sf\bf\LARGE%
+\color{yellow!70!orange}%
+%\color{white}%
+}
+
+
+\def\FCtitle#1#2{%
+  \ifthenelse{\equal{#2}{}}{%
+    {\color{white}\bf Fight Club #1}%
+  }{%
+    {\color{white}\bf Fight Club #1 -- #2}%
+  }%
+}
+
+\def\TCtitle#1#2{%
+  \ifthenelse{\equal{#2}{}}{%
+    {\color{white}\bf Tea Club #1}%
+  }{%
+    {\color{white}\bf Tea Club #1 -- #2}%
+  }%
+}
+
+\def\SCtitle#1#2{%
+  \ifthenelse{\equal{#2}{}}{%
+    {\color{white}\bf Social Club #1}%
+  }{%
+    {\color{white}\bf Social Club #1 -- #2}%
+  }%
+}
+
+\def\HCtitle#1#2{%
+  \ifthenelse{\equal{#2}{}}{%
+    {\color{white}\bf Hardware Club #1}%
+  }{%
+    {\color{white}\bf Hardware Club #1 -- #2}%
+  }%
+}
+
+
+% #1 - cislo pravidla fight clubu
+% #2 - text pravidla
+% #3 - autor vyroku pravidla
+\def\FCrule#1#2#3{Pravidlo #1: {\em #2} (vyřkl #3)}
+
+
+% \def\filesize#1{%
+%   \newcount\constKilo \constKilo=1024\relax%
+%   \newcount\constTen  \constTen=10\relax%
+%   \newcount\varX \varX=#1\relax%
+%   \ifthenelse{#1 < \number\constKilo}{%
+%     \number\varX\,B%
+%   }{%
+%     \divide\varX by \number\constKilo\relax%
+%     \ifthenelse{\number\varX < \number\constKilo}{%
+%       \number\varX\,KiB%
+%     }{%
+%       \divide\varX by \number\constKilo\relax%
+%       \number\varX,\msdZ\,MiB%
+%     }%
+%   }%
+% }
+\def\filesize#1{
+  \pgfkeys{/pgf/fpu=true}%
+  \pgfkeys{/pgf/fpu/output format=fixed}%
+  \pgfkeys{/pgf/number format/precision=2}%
+  \def\pgfres{\pgfmathroundto{\pgfmathresult}\pgfmathresult}%
+  %
+  \newcount\varX \varX=#1\relax%
+  \newcount\constKilo \constKilo=1024\relax%
+  \pgfmathparse{\varX}%
+  \ifthenelse{#1 < \number\constKilo}{%
+    \number\varX\,B%
+  }{%
+    \divide\varX by \number\constKilo\relax%
+    \pgfmathparse{\pgfmathresult / 1024}%
+    \ifthenelse{\number\varX < \number\constKilo}{%
+      \pgfres\,KiB%
+    }{%
+    \xdef\X{\number\varX}%
+      \divide\varX by \number\constKilo\relax%
+      \pgfmathparse{\pgfmathresult / 1024}%
+      \ifthenelse{\number\varX < \number\constKilo}{%
+        \pgfres\,MiB%
+      }{%
+        \pgfmathparse{\pgfmathresult / 1024}%
+        \pgfres\,MiB%
+      }%
+    }%
+  }%
+}
+
+
+\def\score#1{
+\pgfmathsetmacro\pgfxa{#1+1}
+\tikzstyle{scorestars}=[star, star points=5, star point ratio=2.25, draw,inner sep=1.3pt,anchor=outer point 3]
+  \begin{tikzpicture}[baseline]
+    \foreach \i in {1,...,3} {
+    \pgfmathparse{(\i<=#1?"yellow!70!orange":"black!95")}
+    \edef\starcolor{\pgfmathresult}
+    \draw (\i*1.75ex,0) node[name=star\i,scorestars,fill=\starcolor]{};
+   }
+  \end{tikzpicture}
+}
+
+
+% #1 - filename
+% #2 - oznaceni dilu fight clubu
+% #3 - datum zaznamu
+% #4 - seznam diskutujicich osob
+% #5 - pravidlo
+% #6 - popis dilu
+% #7 - delka zaznamu
+% #8 - velikost [B]
+% #9 - uzivatelske hodnoceni
+\def\FC#1#2#3#4#5#6#7#8#9{{
+\hskip -4pt%
+\color{black!10}
+\begin{minipage}{\linewidth}
+  \hrulefill\raisebox{-3pt}{\ifthenelse{\equal{#9}{}}{\score{0}}{\score{#9}}} \\[2pt]
+  #2 (%
+    \ifthenelse{\equal{#3}{}}{}{dne #3}%
+    \ifthenelse{\equal{#7}{}}{}{; délka #7}%
+    \ifthenelse{\equal{#8}{}}{}{; velikost \filesize{#8}}%
+    )  \\
+  Diskutují: #4 \\
+  \ifthenelse{\equal{#5}{}}{}{#5 \\}
+  #6
+\end{minipage}
+}}
+
+% #1 - filename
+% #2 - oznaceni dilu tea clubu
+% #3 - datum zaznamu
+% #4 - seznam diskutujicich osob
+% #5 - popis dilu
+% #6 - delka zaznamu
+% #7 - velikost [B]
+% #8 - uzivatelske hodnoceni
+\def\TC#1#2#3#4#5#6#7#8{{
+\hskip -4pt%
+\color{black!10}
+\begin{minipage}{\linewidth}
+  \hrulefill\raisebox{-3pt}{\ifthenelse{\equal{#8}{}}{\score{0}}{\score{#8}}} \\[2pt]
+  #2 (#3%
+    \ifthenelse{\equal{#6}{}}{}{; délka #6}%
+    \ifthenelse{\equal{#7}{}}{}{; velikost \filesize{#7}}%
+    )  \\
+  Diskutují: #4 \\
+  #5
+\end{minipage}
+}}
+
+% #1 - filename
+% #2 - oznaceni dilu social clubu
+% #3 - datum zaznamu
+% #4 - seznam diskutujicich osob
+% #5 - popis dilu
+% #6 - delka zaznamu
+% #7 - velikost [B]
+% #8 - uzivatelske hodnoceni
+\def\SC#1#2#3#4#5#6#7#8{{
+\hskip -4pt%
+\color{black!10}
+\begin{minipage}{\linewidth}
+  \hrulefill\raisebox{-3pt}{\ifthenelse{\equal{#8}{}}{\score{0}}{\score{#8}}} \\[2pt]
+  #2 (#3%
+    \ifthenelse{\equal{#6}{}}{}{; délka #6}%
+    \ifthenelse{\equal{#7}{}}{}{; velikost \filesize{#7}}%
+    )  \\
+  Diskutují: #4 \\
+  #5
+\end{minipage}
+}}
+
+
+\def\autor#1{{\color{yellow!70!orange} #1}}
+
+\input{subtexs/authors.tex}
+
+\begin{document}
+
+
+
+\section*{Fight Club}
+
+{\color{white}
+Fight club je podcast a vidcast webového herního serveru Games.cz.
+}
+
+\hspace{0pt}  % very 1st minipage more to the left problem hack
+\input{subtexs/FC.tex}
+
+
+
+\newpage
+\section*{Social club}
+
+{\color{white}
+Social club je jeden z dvojice nových formátů vzniklých oddělením od původního 
+Fight Clubu. Bohužel se nedočkal příliš velkého počtu dílů.
+}
+
+\hspace{0pt}  % very 1st minipage more to the left problem hack
+\input{subtexs/SC.tex}
+
+
+
+\newpage
+\section*{Tea club}
+
+{\color{white}
+Tea club je jeden z formátů, který byl oddělen od původního Fight Clubu. Jedná
+se o relativně krátký podcast a vidcast, jenž je založen na rozhovorech 
+s českými a slovenskými herními tvůrci. Jedná se o občasník.
+}
+
+\hspace{0pt}  % very 1st minipage more to the left problem hack
+\input{subtexs/TC.tex}
+
+
+
+\newpage
+\section*{Hardware club}
+
+{\color{white}
+Hardware club je novým formátem nastartovaným v průběhu roku 2018.
+}
+
+\hspace{0pt}  % very 1st minipage more to the left problem hack
+\input{subtexs/HC.tex}
+
+
+
+\end{document}
